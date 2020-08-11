@@ -1,0 +1,110 @@
+---
+title: "Assignment 2"
+subtitle: "Deconstruct, Reconstruct Web Report"
+author: "SHIVANGI AGRAWAL (S3802226)"
+output: html_document
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+# Do not change these settings!
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+### {.tabset} 
+
+Click the **Original**, **Code** and **Reconstruction** tabs to read about the issues and how they were fixed. 
+
+#### Original
+
+<br>
+<center>
+<img src="C:\Users\shiva\OneDrive\Desktop\Sem 2\Data_visualization\Assignment2\COVID-19_Stats.png" width="80%">
+</center>
+<center>*Source: Financial Times (2020)*</center>
+<br>
+
+**Objective**
+
+The coronavirus disease has been declared a 'pandemic' which continues to be a major threat to the world in current times. In order to measure its impact and profundity statistitians and data analysts have been tracking it over past few months in terms of number of people it has affected and the ones who succumbed to it and the ones who recovered successfully.
+
+The objective of this visualization is to record and study the spread of COVID-19 across the globe and track its progress in different parts of the world. It was created and published in Financial Times' international edition and made freely available for people worldwide, who are the targetted audience, so that they can know the global scenario during this pandemic. The information and visualization on Financial Times website is updated regularly to provide authentic and most recent information to readers. The visualization examined in this report was retrieved on 3rd May 2020. It manifests the number of weekly deaths in major countries since the average of daily deaths crossed 3. 
+
+The visualisation chosen had the following three main issues:
+
+* Ambiguous axes: Both x and y-axis are vague, i.e., there is dual y-axis which is confusing and the scale of x-axis does not reveal any time period in terms of date, month or year.
+
+* Data labeling issue: Names of countries are inside the graph. There are a few countries that are selected from each continent and their data is represented through this visualization. So many country names in one 2D plane are overwhelming and hardly make sense.
+
+* Perceptual issue: There is nebulous representation and selection of colors. Same colors are used for different countries which have similar statistics and hence they can be confused for one another. Also, the lines used to trace the progress contain undefined symbols such as stars which have no apparent meaning.
+
+**Reference**
+
+
+* Financial Times.*International Edition*. (2020). *Coronavirus Tracked*. Retrieved May 03, 2020, from Financial Times official website: https://www.ft.com/content/a26fbf7e-48f8-11ea-aeb3-955839e06441
+
+#### Code
+
+The following code was used to fix the issues identified in the original. 
+
+```{r}
+library(ggplot2)
+library(readxl)
+library(dplyr)
+library(xts)
+library(dygraphs)
+library(plotly)
+library(lubridate)
+library(gapminder)
+covid <- read_excel("C:/Users/shiva/OneDrive/Desktop/Sem 2/Data_visualization/Assignment2/COVID-19-geographic-disbtribution-worldwide.xlsx")
+covid
+covid1<-covid[-c(2:4,8,9)]
+filter(covid1,cases<0)
+covid1
+covid1$Month<-format(covid1$dateRep,"%m")
+covid1
+covid1$Month<-replace(covid1$Month, covid1$Month=="01","b) Jan 2020")
+covid1$Month<-replace(covid1$Month, covid1$Month=="02","c) Feb 2020")
+covid1$Month<-replace(covid1$Month, covid1$Month=="03","d) Mar 2020")
+covid1$Month<-replace(covid1$Month, covid1$Month=="04","e) Apr 2020")
+covid1$Month<-replace(covid1$Month, covid1$Month=="05","f) May 2020")
+covid1$Month<-replace(covid1$Month, covid1$Month=="06","Jun")
+covid1$Month<-replace(covid1$Month, covid1$Month=="07","Jul")
+covid1$Month<-replace(covid1$Month, covid1$Month=="08","Aug")
+covid1$Month<-replace(covid1$Month, covid1$Month=="09","Sep")
+covid1$Month<-replace(covid1$Month, covid1$Month=="10","Oct")
+covid1$Month<-replace(covid1$Month, covid1$Month=="11","Nov")
+covid1$Month<-replace(covid1$Month, covid1$Month=="12","a) Dec 2019")
+
+covid1
+
+viz <- plot_ly(covid1, x = ~cases, y = ~covid1$deaths, color = ~covid1$continentExp,
+             frame = ~Month, alpha = 1) %>% 
+  
+
+  add_trace(type = "scatter", mode = "markers") %>% 
+  
+  layout( title = "COVID-19_Statistics",
+    yaxis = list(zeroline = FALSE, title = "Deaths"),
+         xaxis = list(zeroline = FALSE, title = "Cases"))
+
+
+```
+
+**Data Reference**
+
+* European Centre for Disease Prevention and Control. (2020). *Publications and data*. Retrieved May 03, 2020, from ECDC  website: https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
+
+#### Reconstruction
+* The x-axis shows number of cases found and y-axis depicts the number of deaths in a particular month according to the frame below x-axis.
+
+* Continents are taken instead of countries to make the visualization more precise and understandable and the cases found on international waters which do not fall under any continent are represented by 'Other'.
+
+* The pointer which hovers on the markers and data points represents the exact number of cases and deaths in a particular continent.
+
+The following plot fixes the main issues in the original.
+
+```{r fig.align="center", echo = FALSE}
+viz
+```
+
